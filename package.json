@@ -1,0 +1,26 @@
+{
+  "name": "lowcodeproject",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "deepcopy": "^2.1.0",
+    "element-plus": "^2.4.1",
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "@vitejs/plugin-vue-jsx": "^3.0.2",
+    "eslint": "^8.52.0",
+    "eslint-plugin-vue": "^9.18.0",
+    "sass": "^1.69.4",
+    "vite": "^4.4.5"
+  },
+  "main": "index.js",
+  "license": "MIT"
+}
