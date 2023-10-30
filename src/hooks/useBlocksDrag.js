@@ -1,23 +1,34 @@
+import { ref } from "vue";
 export function useBlocksDrag(contentRef, getFocusBlocks) {
   // block 拖拽相关
   let dragState = {
     startX: 0,
     startY: 0
   };
-  const lineInfo = {
-    x: null,
-    y: null
-  };
+  const lineInfo = ref({ x: null, y: null });
   const mousemove = (e) => {
-    const { clientX: moveX, clientY: moveY } = e;
+    let { clientX: moveX, clientY: moveY } = e;
     const { unFocusBlocks } = getFocusBlocks.value;
-    unFocusBlocks.forEach(block => {
-      const { top, left } = block;
+    unFocusBlocks.forEach(() => {
       for (let i = 0; i < dragState.lines.y.length; i++) {
         const linesY = dragState.lines.y[i];
-        if (Math.abs(moveY - dragState.startY + dragState.startTop - linesY.top) < 5) {
-          lineInfo.y = linesY.showTop;
+        const moveTop = moveY - dragState.startY + dragState.startTop;
+        if (Math.abs(moveTop - linesY.top) < 5) {
+          lineInfo.value.y = linesY.showTop;
+          moveY = dragState.startY - dragState.startTop + linesY.top;
           break;
+        } else {
+          lineInfo.value.y = null;
+        }
+      }
+      for (let i = 0; i < dragState.lines.x.length; i++) {
+        const linesX = dragState.lines.x[i];
+        if (Math.abs(moveX - dragState.startX + dragState.startLeft - linesX.left) < 5) {
+          lineInfo.value.x = linesX.showLeft;
+          moveX = dragState.startX - dragState.startLeft + linesX.left;
+          break;
+        } else {
+          lineInfo.value.x = null;
         }
       }
     });
@@ -39,8 +50,8 @@ export function useBlocksDrag(contentRef, getFocusBlocks) {
       startPos: getFocusBlocks.value.onFocusBlocks.map(({ top, left }) => ({ top, left })),
       lines: (() => {
         const lines = { x: [], y: [] };
-        const { onFocusBlocks } = getFocusBlocks.value;
-        onFocusBlocks.forEach(block => {
+        const { unFocusBlocks } = getFocusBlocks.value;
+        unFocusBlocks.forEach(block => {
           const { width: aWidth, height: aHeight, left: aLeft, top: aTop } = block;
           lines.y.push({ showTop: aTop, top: aTop });
           lines.y.push({ showTop: aTop, top: aTop - bHeight });
@@ -64,6 +75,7 @@ export function useBlocksDrag(contentRef, getFocusBlocks) {
     contentRef.value.removeEventListener("mouseup", mouseup);
   };
   return {
-    mousedown
+    mousedown,
+    lineInfo
   };
 }

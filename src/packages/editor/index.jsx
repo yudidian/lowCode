@@ -34,10 +34,10 @@ export default defineComponent({
     const { dragstart, dragend } = useMenuDraggable(contentRef, data);
     // 点击block实现选择
     const { mousedownHandler, contentMousedownHandler, getFocusBlocks, lastBlock } = useBlockFocus(data, (e) => {
-      mousedown(e, lastBlock);
+      mousedown(e, lastBlock.value);
     });
     // block 拖拽相关
-    const { mousedown } = useBlocksDrag(contentRef, getFocusBlocks);
+    const { mousedown, lineInfo } = useBlocksDrag(contentRef, getFocusBlocks);
     return () => (
       <div class="editor">
         <div class="editor-left">
@@ -53,6 +53,8 @@ export default defineComponent({
         <div class="editor-top">顶部菜单栏</div>
         <div class="editor-right">右侧</div>
         <div class="editor-wrapper">
+          {lineInfo.value.y !== null && <div class="line-y" style={{ top: lineInfo.value.y + "px" }}></div> }
+          {lineInfo.value.x !== null && <div class="line-x" style={{ left: lineInfo.value.x + "px" }}></div> }
           <div class="editor-wrapper-content" style={containerStyles.value} ref={contentRef} onMousedown={contentMousedownHandler}>
             {data.value.blocks.map((block, index) => {
               return (

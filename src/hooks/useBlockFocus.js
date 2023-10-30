@@ -4,7 +4,7 @@ export function useBlockFocus(data, callback) {
   const selectIndex = ref(-1); // 选择block 的 索引
   // 选择的最后一个block
   const lastBlock = computed(() => {
-    return data.value.blocks[selectIndex];
+    return data.value.blocks[selectIndex.value];
   });
   const getFocusBlocks = computed(() => {
     const onFocusBlocks = [];
@@ -20,7 +20,6 @@ export function useBlockFocus(data, callback) {
         block.focus = false;
       }
     });
-    selectIndex.value = -1;
   };
   const mousedownHandler = (e, block, index) => {
     e.preventDefault();
@@ -28,6 +27,7 @@ export function useBlockFocus(data, callback) {
     selectIndex.value = index;
     if (!block.focus) {
       // 判断是否是shift键按下
+      console.log(e.shiftKey);
       !e.shiftKey && clearBlocksFocus();
       block.focus = true;
     }
@@ -35,6 +35,7 @@ export function useBlockFocus(data, callback) {
   };
   const contentMousedownHandler = (e) => {
     clearBlocksFocus();
+    selectIndex.value = -1;
   };
   return {
     getFocusBlocks,

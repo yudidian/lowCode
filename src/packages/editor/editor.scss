@@ -67,7 +67,20 @@
     width: calc(100vw - 270px - 270px);
     height: calc(100vh - 120px);
     overflow: auto;
-
+    .line-y {
+      position: absolute;
+      left: 0;
+      right: 0;
+      border: 1px red dashed;
+      z-index: 999;
+    }
+    .line-x {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border: 1px red dashed;
+      z-index: 999;
+    }
     &-content {
       width: 1980px;
       height: 1080px;
