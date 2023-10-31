@@ -40,7 +40,7 @@ export function useBlocksDrag(contentRef, getFocusBlocks) {
       block.left = dragState.startPos[index].left + dragX;
     });
   };
-  const mousedown = (e, lastBlock) => {
+  const mousedown = (e, lastBlock, data) => {
     const { width: bWidth, height: bHeight } = lastBlock;
     dragState = {
       startX: e.clientX,
@@ -51,7 +51,12 @@ export function useBlocksDrag(contentRef, getFocusBlocks) {
       lines: (() => {
         const lines = { x: [], y: [] };
         const { unFocusBlocks } = getFocusBlocks.value;
-        unFocusBlocks.forEach(block => {
+        [ {
+          top: 0,
+          left: 0,
+          width: data.value.container.width,
+          height: data.value.container.height
+        }, ...unFocusBlocks ].forEach(block => {
           const { width: aWidth, height: aHeight, left: aLeft, top: aTop } = block;
           lines.y.push({ showTop: aTop, top: aTop });
           lines.y.push({ showTop: aTop, top: aTop - bHeight });
@@ -73,6 +78,10 @@ export function useBlocksDrag(contentRef, getFocusBlocks) {
   const mouseup = (e) => {
     contentRef.value.removeEventListener("mousemove", mousemove);
     contentRef.value.removeEventListener("mouseup", mouseup);
+    lineInfo.value = {
+      x: null,
+      y: null
+    };
   };
   return {
     mousedown,

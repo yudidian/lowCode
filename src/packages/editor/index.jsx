@@ -34,7 +34,7 @@ export default defineComponent({
     const { dragstart, dragend } = useMenuDraggable(contentRef, data);
     // 点击block实现选择
     const { mousedownHandler, contentMousedownHandler, getFocusBlocks, lastBlock } = useBlockFocus(data, (e) => {
-      mousedown(e, lastBlock.value);
+      mousedown(e, lastBlock.value, data);
     });
     // block 拖拽相关
     const { mousedown, lineInfo } = useBlocksDrag(contentRef, getFocusBlocks);
