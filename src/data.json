@@ -7,5 +7,9 @@
     {"top": 100, "left": 100, "zIndex": 1, "key": "text"},
     {"top": 200, "left": 200, "zIndex": 1, "key": "button"},
     {"top": 300, "left": 300, "zIndex": 1, "key": "input"}
+  ],
+  "menuList": [
+    {"label": "撤销", "keyCode": "ctrl+z", "icon": "icon-undo1", "name": "preDo"},
+    {"label": "恢复", "keyCode": "ctrl+y", "icon": "icon-redo1", "name": "nextDo"}
   ]
 }

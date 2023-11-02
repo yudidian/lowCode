@@ -1,0 +1,23 @@
+{
+  "id": "4312723",
+  "name": "lowCode",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1467420",
+      "name": "undo",
+      "font_class": "undo1",
+      "unicode": "e6ac",
+      "unicode_decimal": 59052
+    },
+    {
+      "icon_id": "1467394",
+      "name": "redo",
+      "font_class": "redo1",
+      "unicode": "e6a2",
+      "unicode_decimal": 59042
+    }
+  ]
+}

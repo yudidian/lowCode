@@ -1,8 +1,9 @@
+@import "@/assets/style/constant.scss";
 .editor {
   &-left, &-right {
     position: absolute;
-    width: 270px;
-    background-color: #ffffff;
+    width: $left-width;
+    background-color: $base-bg-color;
     top: 0;
     bottom: 0;
     overflow: auto;
@@ -10,7 +11,7 @@
 
   &-left {
     left: 0;
-    background-color: #c8b6ff;
+    background-color: $base-bg-color;
     &-item {
       position: relative;
       width: 95%;
@@ -49,23 +50,51 @@
   }
 
   &-top {
-    height: 120px;
-    background-color: #bbd0ff;
+    position: absolute;
+    left: $left-width;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: $top-height;
+    width: calc(100vw - $left-width - $right-width);
+    background-color: #e8eddf;
+    &-item {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      background-color: #dedbd2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #4a5759;
+      user-select: none;
+      cursor: pointer;
+      &+& {
+        margin-left: 20px;
+      }
+      .item-icon{
+        font-size: 30px;
+      }
+      .item-label{
+        color: #1a1a1a;
+      }
+    }
   }
 
   &-right {
     right: 0;
-    background-color: #b8c0ff;
+    background-color: #efefef;
   }
 
   &-wrapper {
     position: absolute;
-    left: 270px;
-    right: 270px;
+    left: $left-width;
+    right: $right-width;
     top: 120px;
     box-sizing: border-box;
-    width: calc(100vw - 270px - 270px);
-    height: calc(100vh - 120px);
+    width: calc(100vw - $left-width - $right-width);
+    height: calc(100vh - $top-height);
     overflow: auto;
     .line-y {
       position: absolute;
@@ -85,7 +114,7 @@
       width: 1980px;
       height: 1080px;
       position: relative;
-      background-color: #e7c6ff;
+      background-color: #dedbd2;
     }
   }
 }

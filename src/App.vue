@@ -13,7 +13,8 @@ const state = ref(data);
 provide("config", registerConfig);
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+@import "@/assets/icon/iconfont.css";
 .app {
   position: fixed;
   top: 0;

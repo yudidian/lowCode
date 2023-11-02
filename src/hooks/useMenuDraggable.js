@@ -1,4 +1,5 @@
 // 处理左侧菜单拖拽
+import mitt from "mitt";
 export function useMenuDraggable(contentRef, data) {
   let currentComponent = null;
   const dragenterHandler = (e)=> {
@@ -28,6 +29,8 @@ export function useMenuDraggable(contentRef, data) {
     currentComponent = null;
   };
   const dragstart = (e, component) => {
+    // 拖拽开始绑定start事件
+    mitt().emit("@start");
     currentComponent = component;
     const el = contentRef.value;
     el.addEventListener("dragenter", dragenterHandler);
@@ -41,6 +44,8 @@ export function useMenuDraggable(contentRef, data) {
     el.removeEventListener("dragover", dragoverHandler);
     el.removeEventListener("dragleave", dragleaveHandler);
     el.removeEventListener("drop", dropHandler);
+    // 拖拽结束绑定start事件
+    mitt().emit("@end");
   };
   return {
     dragstart,
