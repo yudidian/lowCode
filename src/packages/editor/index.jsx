@@ -21,7 +21,6 @@ export default defineComponent({
         return props.modelValue;
       },
       set(newVal) {
-        console.log(newVal);
         ctx.emit("update:modelValue", deepcopy(newVal));
       }
     });
@@ -35,10 +34,10 @@ export default defineComponent({
     const { dragstart, dragend } = useMenuDraggable(contentRef, data);
     // 点击block实现选择
     const { mousedownHandler, contentMousedownHandler, getFocusBlocks, lastBlock } = useBlockFocus(data, (e) => {
-      mousedown(e, lastBlock.value, data);
+      mousedown(e, lastBlock.value);
     });
     // block 拖拽相关
-    const { mousedown, lineInfo } = useBlocksDrag(contentRef, getFocusBlocks);
+    const { mousedown, lineInfo } = useBlocksDrag(contentRef, getFocusBlocks, data);
     // 顶部菜单栏相关操作
     const { state } = useCommand(data);
     return () => (
@@ -46,7 +45,7 @@ export default defineComponent({
         <div class="editor-left">
           {config.componentList.map((component) => {
             return (
-              <div class="editor-left-item" draggable onDragstart={(e) => dragstart(e, component)} onDragend={() => dragend}>
+              <div class="editor-left-item" draggable onDragstart={(e) => dragstart(e, component)} onDragend={dragend}>
                 <span class="item-label">{component.label}</span>
                 <div class="item-component">{component.preview()}</div>
               </div>

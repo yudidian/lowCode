@@ -1,19 +1,27 @@
-import mitt from "mitt";
 import deepcopy from "deepcopy";
+import { inject, onUnmounted, } from "vue";
+import { ElMessage } from "element-plus";
 
 export function useCommand(data) {
+  const events = inject("$events");
   const state = {
     current: -1, // 前进后退的索引值
     queue: [], // 存放所有的操作命令
     commands: {}, // 执行功能映射表
-    commandArray: [] // 存放所有命令
+    commandArray: [], // 存放所有命令
+    destroyArray: [] // 存放所有销毁函数
   };
   const registry = (command) => {
     state.commandArray.push(command);
     state.commands[command.name] = () => {
       const { nextDo, preDo } = command.execute();
       nextDo && nextDo();
-      preDo && preDo();
+      if (!command.pushQueue) return;
+      if (state.queue.length > 0) {
+        state.queue = state.queue.slice(0, state.current + 1);
+      }
+      state.queue.push({ nextDo, preDo });
+      state.current++;
     };
   };
   registry({
@@ -22,7 +30,12 @@ export function useCommand(data) {
     execute() {
       return {
         nextDo() {
-          console.log("重做");
+          state.current++;
+          if (!state.queue[state.current]){
+            return ElMessage.error("没有下一步了");
+          }
+          const { nextDo } = state.queue[state.current];
+          nextDo && nextDo();
         }
       };
     }
@@ -33,7 +46,12 @@ export function useCommand(data) {
     execute() {
       return {
         nextDo() {
-          console.log("撤销");
+          if (!state.queue[state.current]){
+            return ElMessage.error("没有上一步了");
+          }
+          const { preDo } = state.queue[state.current];
+          preDo && preDo();
+          state.current--;
         }
       };
     }
@@ -41,39 +59,69 @@ export function useCommand(data) {
   registry({
     name: "drag",
     pushQueue: true,
+    beforeData: null,
     init() {
       // 初始化
-      const beforeData = data.value.blocks;
-      let afterData = [];
+      this.beforeData = null;
+      // 拖拽开始保存状态
       const start = () => {
-        data.value = {
-          ...data.value,
-          blocks: beforeData
-        };
+        this.beforeData = deepcopy(data.value.blocks);
       };
+      // 拖拽结束触发指令
       const end = () => {
-        afterData = deepcopy(data.value.blocks);
+        state.commands.drag && state.commands.drag();
       };
-      mitt().on("@start", start);
-      mitt().on("@end", end);
+      events.on("@start", start);
+      events.on("@end", end);
+      return () => {
+        events.off("@start", start);
+        events.off("@end", end);
+      };
     },
     execute() {
+      const beforeData = this.beforeData;
+      const afterData = deepcopy(data.value.blocks);
       return {
         nextDo() {
-          console.log("拖拽");
+          data.value = { ...data.value, blocks: afterData };
         },
         preDo(){
-          console.log("取消拖拽");
+          data.value = { ...data.value, blocks: beforeData };
         }
       };
     }
   });
 
+  const keyDownHandler = (e) => {
+    e.preventDefault();
+    let keyStr = "";
+    if (e.ctrlKey && e.code === "KeyZ") {
+      keyStr = "ctrl+z";
+    }
+    if (e.ctrlKey && e.code === "KeyY") {
+      keyStr = "ctrl+y";
+    }
+    if (keyStr === "") return;
+    const command = state.commandArray.find((command) => command.keyboard === keyStr);
+    if (!command) return;
+    const { nextDo } = command.execute();
+    nextDo && nextDo();
+  };
+  document.addEventListener("keydown", keyDownHandler);
   (() => {
+    state.destroyArray.push(() => {
+      document.addEventListener("keydown", keyDownHandler);
+    });
     state.commandArray.forEach(item => {
-      item.init && item.init();
+      item.init && state.destroyArray.push(item.init());
     });
   })();
+  onUnmounted(() => {
+    state.current = -1;
+    state.destroyArray.forEach(item => {
+      item && item();
+    });
+  });
   return {
     state
   };

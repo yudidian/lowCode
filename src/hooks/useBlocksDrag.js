@@ -1,5 +1,7 @@
-import { ref } from "vue";
-export function useBlocksDrag(contentRef, getFocusBlocks) {
+import { inject, ref } from "vue";
+
+export function useBlocksDrag(contentRef, getFocusBlocks, data) {
+  const events = inject("$events");
   // block 拖拽相关
   let dragState = {
     startX: 0,
@@ -40,7 +42,8 @@ export function useBlocksDrag(contentRef, getFocusBlocks) {
       block.left = dragState.startPos[index].left + dragX;
     });
   };
-  const mousedown = (e, lastBlock, data) => {
+  const mousedown = (e, lastBlock) => {
+    events.emit("@start");
     const { width: bWidth, height: bHeight } = lastBlock;
     dragState = {
       startX: e.clientX,
@@ -76,6 +79,7 @@ export function useBlocksDrag(contentRef, getFocusBlocks) {
     contentRef.value.addEventListener("mouseup", mouseup);
   };
   const mouseup = (e) => {
+    events.emit("@end");
     contentRef.value.removeEventListener("mousemove", mousemove);
     contentRef.value.removeEventListener("mouseup", mouseup);
     lineInfo.value = {

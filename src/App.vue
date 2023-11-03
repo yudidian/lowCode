@@ -9,8 +9,11 @@ import { provide, ref } from "vue";
 import data from "./data.json";
 import Editor from "@/packages/editor/index.jsx";
 import registerConfig from "@/utils/editorConfig.jsx";
+import mitt from "mitt";
 const state = ref(data);
+const events = new mitt();
 provide("config", registerConfig);
+provide("$events", events);
 </script>
 
 <style lang="scss">
